@@ -4,7 +4,7 @@ namespace tremolo {
 class Tremolo {
 public:
   Tremolo() {
-    lfo.setFrequency(440.f /* Hz */, true
+    lfo.setFrequency(5.f /* Hz */, true
       );
   }
   void prepare(double sampleRate, int expectedMaxFramesPerBlock) {
@@ -31,7 +31,7 @@ public:
         const auto inputSample = buffer.getSample(channelIndex, frameIndex);
 
         // TODO: modulate the sample
-        const auto outputSample = 0.1f * lfoValue;
+        const auto outputSample = inputSample;
 
         // set the output sample
         buffer.setSample(channelIndex, frameIndex, outputSample);
