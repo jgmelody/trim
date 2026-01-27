@@ -3,6 +3,10 @@
 namespace tremolo {
 class Tremolo {
 public:
+  Tremolo() {
+    lfo.setFrequency(5.f /* Hz */, true
+      );
+  }
   void prepare(double sampleRate, int expectedMaxFramesPerBlock) {
     juce::ignoreUnused(sampleRate, expectedMaxFramesPerBlock);
   }
