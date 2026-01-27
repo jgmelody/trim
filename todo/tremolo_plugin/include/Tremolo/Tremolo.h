@@ -33,5 +33,6 @@ public:
 
 private:
   // You should put class members and private functions here
+  juce::dsp::Oscillator<float> lfo{ [](auto phase){ return std::sin(phase); }};
 };
 }  // namespace tremolo
