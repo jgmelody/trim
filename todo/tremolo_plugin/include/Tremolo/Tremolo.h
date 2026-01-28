@@ -22,7 +22,11 @@ public:
       // generate the LFO value
       const auto lfoValue = lfo.processSample(0.f);
 
-      // TODO: calculate the modulation value
+        // calculate the modulation value
+      constexpr auto modulationDepth = 0.4f;
+      const auto modulationValue = modulationDepth * lfoValue + 1.f;
+
+
 
       // for each channel sample in the frame
       for (const auto channelIndex :
@@ -30,8 +34,8 @@ public:
         // get the input sample
         const auto inputSample = buffer.getSample(channelIndex, frameIndex);
 
-        // TODO: modulate the sample
-        const auto outputSample = inputSample;
+        // modulate the sample
+        const auto outputSample = inputSample * modulationValue;
 
         // set the output sample
         buffer.setSample(channelIndex, frameIndex, outputSample);
