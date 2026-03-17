@@ -19,6 +19,8 @@ public:
     .numChannels = 1u,
     };
 
+    lfoMix.reset(128);
+
     for (auto& lfo : lfos){
       lfo.prepare(processSpec);
     }
@@ -68,18 +70,34 @@ public:
 private:
   // You should put class members and private functions here
 
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> lfoMix;
+
     static float triangle(float phase){
     const auto ft = phase / juce::MathConstants<float>::twoPi;
     return 4.f * std::abs(ft - std::floor(ft + 0.5f)) - 1.f;
   }
 
-
+    //update to include smoothing
     float getNextLfoValue()
-    { return lfos[juce::toUnderlyingType(currentLfo)].processSample(0.f); }
+    {
+            if
+                (lfoMix.isSmoothing())
+            {
+                return lfoMix.getNextValue();
+            }
+        return lfos[juce::toUnderlyingType(currentLfo)].processSample(0.f);
+    }
 
+    //update to include smoothing
     void updateLfoWaveform(){
-    if (currentLfo != lfoToSet)
-      currentLfo = lfoToSet;
+    if (currentLfo != lfoToSet) {
+        const float oldSample{lfos[juce::toUnderlyingType(currentLfo)].processSample(0.f)};
+
+        currentLfo = lfoToSet;
+        const float newSample{lfos[juce::toUnderlyingType(currentLfo)].processSample(0.f)};
+        lfoMix.setCurrentAndTargetValue(oldSample);
+        lfoMix.setTargetValue(newSample);
+    }
     }
 
   //juce::dsp::Oscillator<float> lfo{ [](auto phase){ return std::sin(phase); }};
