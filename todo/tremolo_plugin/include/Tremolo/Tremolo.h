@@ -4,7 +4,6 @@ namespace tremolo
 {
     class Tremolo
     {
-        float gainSetting = 0.f;
         public:
             enum class LfoWaveform : size_t{
                 sine = 0,
@@ -30,6 +29,8 @@ namespace tremolo
 
             lfoMix.reset(64);
 
+            smoothedGainParameter.reset(sampleRate, 0.01);
+
             for (auto& lfo : lfos)
             {
               lfo.prepare(processSpec);
@@ -50,7 +51,9 @@ namespace tremolo
           }
 
           void setOutputGain(float gainDb) {
-              gainSetting = juce::Decibels::decibelsToGain(gainDb);
+            const auto linearGain = juce::Decibels::decibelsToGain(gainDb);
+
+                smoothedGainParameter.setTargetValue(linearGain);
           }
 
 
@@ -62,6 +65,8 @@ namespace tremolo
             {
               // generate the LFO value
               const auto lfoValue = getNextLfoValue();
+
+              const auto gainSetting = smoothedGainParameter.getNextValue();
 
                 // calculate the modulation value
               constexpr auto modulationDepth = 0.4f;
@@ -98,6 +103,8 @@ namespace tremolo
           // You should put class members and private functions here
 
             juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> lfoMix;
+
+            juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> smoothedGainParameter;
 
             static float triangle(float phase)
             {
