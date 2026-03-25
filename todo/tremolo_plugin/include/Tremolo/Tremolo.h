@@ -4,6 +4,7 @@ namespace tremolo
 {
     class Tremolo
     {
+        float gainSetting = 0.f;
         public:
             enum class LfoWaveform : size_t{
                 sine = 0,
@@ -48,6 +49,10 @@ namespace tremolo
               }
           }
 
+          void setOutputGain(float gainDb) {
+              gainSetting = juce::Decibels::decibelsToGain(gainDb);
+          }
+
 
           void process(juce::AudioBuffer<float>& buffer) noexcept
           {
@@ -72,7 +77,7 @@ namespace tremolo
                 const auto inputSample = buffer.getSample(channelIndex, frameIndex);
 
                 // modulate the sample
-                const auto outputSample = inputSample * modulationValue;
+                const auto outputSample = inputSample * modulationValue * gainSetting;
 
                 // set the output sample
                 buffer.setSample(channelIndex, frameIndex, outputSample);
