@@ -56,6 +56,7 @@ TEST(JsonSerializer, DeserializeFromString) {
   EXPECT_TRUE(parameters.bypassed);
   EXPECT_EQ(juce::String{"Triangle"},
             parameters.waveform.getCurrentChoiceName());
+      EXPECT_FLOAT_EQ(parameters.gain.get(), 1.2f);
 }
 
 TEST(JsonSerializer, DontUpdateParametersWhenWaveformNameIsInvalid) {
