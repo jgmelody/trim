@@ -13,7 +13,7 @@ TEST(JsonSerializer, SerializeToString) {
   const juce::String expectedOutput =
       u8R"({
   "__version__": 1,
-  "pluginName": "Tremolo",
+  "pluginName": "fuck",
   "modulationRateHz": 10.0,
   "bypassed": true,
   "modulationWaveform": "Triangle"

@@ -37,6 +37,7 @@ namespace tremolo
             }
           }
 
+          
           void setLfoWaveform(LfoWaveform waveform)
           {
             jassert(waveform == LfoWaveform::sine || waveform == LfoWaveform::sawtooth || waveform == LfoWaveform::triangle);
@@ -113,8 +114,7 @@ namespace tremolo
 
             static float sawtooth(float phase)
             {
-                float p = phase / juce::MathConstants<float>::pi;
-                return 2 * std::abs(p - 1.f) - 1.f;
+                return phase / juce::MathConstants<float>::pi; // ramps -1 to +1, resets at ±π
             }
 
             //update to include smoothing

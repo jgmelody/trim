@@ -62,7 +62,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 # Adds a plugin target.
-set(TREMOLO_PLUGIN_NAME "FUCK")
+set(TREMOLO_PLUGIN_NAME "Fuck")
 juce_add_plugin(
   TremoloCoursePlugin
   PRODUCT_NAME
