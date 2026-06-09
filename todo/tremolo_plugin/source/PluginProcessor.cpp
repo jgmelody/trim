@@ -1,10 +1,27 @@
+namespace {
+    void logMessage(const juce::String& message)
+    {
+      // Writes to ~/Documents/tremolo_debug_log.txt
+      auto logFile = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+              .getChildFile("tremolo_debug_log.txt");
 
+      logFile.appendText(message + "\n");
+    }
+}
 namespace tremolo {
 PluginProcessor::PluginProcessor()
     : AudioProcessor(
           BusesProperties()
               .withInput("Input", juce::AudioChannelSet::stereo(), true)
-              .withOutput("Output", juce::AudioChannelSet::stereo(), true)) {}
+              .withOutput("Output", juce::AudioChannelSet::stereo(), true)) { DBG("Plugin constructed");
+
+  auto logFile = juce::File::getSpecialLocation(
+          juce::File::userApplicationDataDirectory)
+          .getChildFile("JUCE")
+          .getChildFile("log.txt");
+
+  DBG("Log file should be around: " << logFile.getFullPathName());
+}
 
 const juce::String PluginProcessor::getName() const {
   return TREMOLO_PLUGIN_NAME;
@@ -55,6 +72,13 @@ void PluginProcessor::prepareToPlay(double sampleRate,
   // Use this method as the place to do any pre-playback
   // initialization that you need, e.g., allocate memory.
 
+
+  DBG("prepareToPlay:"
+              << " rate=" << parameters.rate.get()
+              << " gain=" << parameters.gain.get()
+              << " bypassed=" << (int)parameters.bypassed.get()
+              << " waveform=" << parameters.waveform.getIndex());
+
   tremolo.prepare(sampleRate, expectedMaxFramesPerBlock);
 
   bypassTransitionSmoother.prepare({
@@ -94,6 +118,16 @@ bool PluginProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const {
 void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
                                    juce::MidiBuffer& midiMessages) {
   juce::ignoreUnused(midiMessages);
+
+  static bool firstBlock = true;
+  if (firstBlock) {
+    DBG("processBlock first block: "
+                << "rate=" << parameters.rate.get()
+                << ", gain=" << parameters.gain.get()
+                << ", bypassed=" << (int)parameters.bypassed.get()
+                << ", waveform=" << parameters.waveform.getIndex());
+    firstBlock = false;
+  }
 
   juce::ScopedNoDenormals noDenormals;
   const auto totalNumInputChannels = getTotalNumInputChannels();
@@ -144,6 +178,12 @@ void PluginProcessor::getStateInformation(juce::MemoryBlock& destData) {
 void PluginProcessor::setStateInformation(const void* data, int sizeInBytes) {
   juce::MemoryInputStream inputStream{data, static_cast<size_t>(sizeInBytes), false};
   const auto result = JsonSerializer::deserialize(inputStream ,parameters);
+
+  DBG("setStateInformation after deserialize:"
+              << " rate=" << parameters.rate.get()
+              << " gain=" << parameters.gain.get()
+              << " bypassed=" << (int)parameters.bypassed.get()
+              << " waveform=" << parameters.waveform.getIndex());
 
   if (result.failed()){
     DBG(result.getErrorMessage());

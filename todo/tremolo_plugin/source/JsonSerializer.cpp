@@ -2,7 +2,7 @@ namespace tremolo {
 namespace {
     struct SerializableParameters {
         float rate;
-        float gain;
+        /*float gain;*/
         bool bypassed;
         juce::String waveform;
 
@@ -25,7 +25,7 @@ namespace {
               return;
 }
 
-          archive(named("modulationRateHz", t.rate), named("gain", t.gain), named("bypassed", t.bypassed)
+          archive(named("modulationRateHz", t.rate),/* named("gain", t.gain),*/ named("bypassed", t.bypassed)
                   , named("modulationWaveform", t.waveform));
 
         }
@@ -34,7 +34,7 @@ namespace {
     SerializableParameters from(const tremolo::Parameters& parameters) {
       return {
               .rate = parameters.rate.get(),
-              .gain = parameters.gain.get(),
+              /*.gain = parameters.gain.get(),*/
               .bypassed = parameters.bypassed.get(),
               .waveform = parameters.waveform.getCurrentChoiceName(),
       };
@@ -78,7 +78,7 @@ juce::Result JsonSerializer::deserialize(juce::InputStream& input,
             parsedParameters->waveform);
     parameters.waveform = modulationWaveformIndex;
     parameters.rate = parsedParameters->rate;
-    parameters.gain = parsedParameters->gain;
+    /*parameters.gain = parsedParameters->gain;*/
     parameters.bypassed = parsedParameters-> bypassed;
 
   return juce::Result::ok();

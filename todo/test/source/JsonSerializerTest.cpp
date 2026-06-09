@@ -8,6 +8,7 @@ TEST(JsonSerializer, SerializeToString) {
 
   parameters.rate = 10.f;
   parameters.bypassed = true;
+  parameters.gain = 1.2f;
   parameters.waveform = 1;
 
   const juce::String expectedOutput =
@@ -15,7 +16,7 @@ TEST(JsonSerializer, SerializeToString) {
   "__version__": 1,
   "pluginName": "Fuck",
   "modulationRateHz": 10.0,
-  "gain": 0.0,
+  "gain": 1.2,
   "bypassed": true,
   "modulationWaveform": "Triangle"
 })";
@@ -36,7 +37,7 @@ TEST(JsonSerializer, DeserializeFromString) {
   "__version__": 1,
   "pluginName": "Fuck",
   "modulationRateHz": 10.0,
-  "gain": 0.0,
+  "gain": 1.2,
   "bypassed": true,
   "modulationWaveform": "Triangle"
 })";
