@@ -13,15 +13,7 @@ PluginProcessor::PluginProcessor()
     : AudioProcessor(
           BusesProperties()
               .withInput("Input", juce::AudioChannelSet::stereo(), true)
-              .withOutput("Output", juce::AudioChannelSet::stereo(), true)) { DBG("Plugin constructed");
-
-  auto logFile = juce::File::getSpecialLocation(
-          juce::File::userApplicationDataDirectory)
-          .getChildFile("JUCE")
-          .getChildFile("log.txt");
-
-  DBG("Log file should be around: " << logFile.getFullPathName());
-}
+              .withOutput("Output", juce::AudioChannelSet::stereo(), true)) {}
 
 const juce::String PluginProcessor::getName() const {
   return TREMOLO_PLUGIN_NAME;
@@ -119,16 +111,6 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float>& buffer,
                                    juce::MidiBuffer& midiMessages) {
   juce::ignoreUnused(midiMessages);
 
-  static bool firstBlock = true;
-  if (firstBlock) {
-    DBG("processBlock first block: "
-                << "rate=" << parameters.rate.get()
-                << ", gain=" << parameters.gain.get()
-                << ", bypassed=" << (int)parameters.bypassed.get()
-                << ", waveform=" << parameters.waveform.getIndex());
-    firstBlock = false;
-  }
-
   juce::ScopedNoDenormals noDenormals;
   const auto totalNumInputChannels = getTotalNumInputChannels();
   const auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -178,12 +160,6 @@ void PluginProcessor::getStateInformation(juce::MemoryBlock& destData) {
 void PluginProcessor::setStateInformation(const void* data, int sizeInBytes) {
   juce::MemoryInputStream inputStream{data, static_cast<size_t>(sizeInBytes), false};
   const auto result = JsonSerializer::deserialize(inputStream ,parameters);
-
-  DBG("setStateInformation after deserialize:"
-              << " rate=" << parameters.rate.get()
-              << " gain=" << parameters.gain.get()
-              << " bypassed=" << (int)parameters.bypassed.get()
-              << " waveform=" << parameters.waveform.getIndex());
 
   if (result.failed()){
     DBG(result.getErrorMessage());
